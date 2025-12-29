@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>IppoBet</artifactId>
+    <groupId>org.pippobet</groupId>
+    <artifactId>PippoBet</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -118,7 +118,7 @@
                     <artifactId>javafx-maven-plugin</artifactId>
                     <version>0.0.8</version>
                     <configuration>
-                        <mainClass>com.ippobet.Main</mainClass>
+                        <mainClass>com.pippobet.Main</mainClass>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -132,7 +132,7 @@
                     <version>0.8.13</version>
                     <configuration>
                         <excludes>
-                            <exclude>**/com/ippobet/model/</exclude>
+                            <exclude>**/com/pippobet/model/</exclude>
                             <exclude>**/App.*</exclude>
                             <exclude>**/Main.*</exclude>
                             <exclude>**/DatabasePortInvalidException.*</exclude>
@@ -154,12 +154,12 @@
                     <version>1.20.2</version>
                     <configuration>
                         <targetClasses>
-                            <param>com.ippobet.controller.*</param>
-                            <param>com.ippobet.repository.mongo.*</param>
+                            <param>com.pippobet.controller.*</param>
+                            <param>com.pippobet.repository.mongo.*</param>
                         </targetClasses>
                         <targetTests>
-                            <param>com.ippobet.controller.*</param>
-                            <param>com.ippobet.repository.mongo.*</param>
+                            <param>com.pippobet.controller.*</param>
+                            <param>com.pippobet.repository.mongo.*</param>
                         </targetTests>
                         <mutators>
                             <!-- check https://pitest.org/quickstart/mutators/ -->
