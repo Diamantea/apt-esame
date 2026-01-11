@@ -1,11 +1,32 @@
 package com.pippobet.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Objects;
 
+@Document(collection = "bet")
 public class Bet {
+    @Id
+    private ObjectId id;
+
+    @JsonProperty("home_team")
+    @Field(name = "home_team")
     private String homeTeam;
+
+    @JsonProperty("away_team")
+    @Field(name = "away_team")
     private String awayTeam;
+
+    @JsonProperty("outcome")
+    @Field(name = "outcome")
     private String outcome;
+
+    @JsonProperty("odd")
+    @Field(name = "odd")
     private double odd;
 
 
