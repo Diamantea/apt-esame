@@ -202,10 +202,7 @@
                     <configuration>
                         <excludes>
                             <exclude>**/com/pippobet/model/</exclude>
-                            <exclude>**/App.*</exclude>
-                            <exclude>**/Main.*</exclude>
-                            <exclude>**/DatabasePortInvalidException.*</exclude>
-                            <exclude>**/EmptyInputParameterException.*</exclude>
+                            <exclude>**/PippoBetApplication.*</exclude>
                         </excludes>
                     </configuration>
                     <executions>
