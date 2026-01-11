@@ -1,10 +1,12 @@
 package com.pippobet.service;
 
+import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.model.Bet;
 import com.pippobet.repository.BetRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -39,5 +41,16 @@ public class BetServiceTest {
         var actualBets = betService.findAll();
 
         Assertions.assertEquals(expectedBets, actualBets);
+    }
+
+    @Test
+    void testCreateBetFromDTOShouldSave() {
+        var betDTO = new BetCreateDTO("Manchester", "Liverpool", "1", 2.5);
+        var expectedBet = new Bet("Manchester", "Liverpool", "1", 2.5);
+        Mockito.when(betRepository.saveBet(Mockito.any(Bet.class))).thenReturn(expectedBet);
+
+        var actualBet = betService.saveBet(betDTO);
+
+        Assertions.assertEquals(expectedBet, actualBet);
     }
 }

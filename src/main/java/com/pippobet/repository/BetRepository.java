@@ -6,4 +6,5 @@ import java.util.List;
 public interface BetRepository
 {
     List<Bet> findAllBets();
+    Bet saveBet(Bet bet);
 }
