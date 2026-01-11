@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,6 +35,8 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
     private Response response;
     private List<Bet> expectedBets;
     private WebDriver driver;
+
+    private Bet newBet;
 
     @Before
     public void setUp() {
@@ -105,6 +108,49 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
         }
 
         driver.quit();
+    }
+
+    @Given("a new bet with home team {string}, away team {string}, outcome {string}, and odd {double}")
+    public void givenANewBet(String homeTeam, String awayTeam, String outcome, double odd) {
+        this.newBet = new Bet(homeTeam, awayTeam, outcome, odd);
+    }
+
+    @When("the bet is created via REST endpoint")
+    public void whenBetIsCreatedViaRESTEndpoint() {
+        String betJson = String.format(
+            "{\"home_team\":\"%s\",\"away_team\":\"%s\",\"outcome\":\"%s\",\"odd\":%s}",
+            newBet.getHomeTeam(), newBet.getAwayTeam(), newBet.getOutcome(), newBet.getOdd()
+        );
+
+        response = RestAssured.given()
+            .contentType("application/json")
+            .body(betJson)
+            .when()
+            .post("/api/bets")
+            .andReturn();
+    }
+
+    @Then("the bet is successfully created")
+    public void thenBetIsSuccessfullyCreated() {
+        response.then().statusCode(HttpStatus.SC_OK);
+
+        Bet createdBet = response.jsonPath().getObject("", Bet.class);
+        Assertions.assertEquals(newBet.getHomeTeam(), createdBet.getHomeTeam());
+        Assertions.assertEquals(newBet.getAwayTeam(), createdBet.getAwayTeam());
+        Assertions.assertEquals(newBet.getOutcome(), createdBet.getOutcome());
+        Assertions.assertEquals(newBet.getOdd(), createdBet.getOdd());
+    }
+
+    @Then("the bet is persisted in the Database")
+    public void thenBetIsPersistedInDatabase() {
+        List<Bet> bets = mongoTemplate.findAll(Bet.class);
+        Assertions.assertEquals(1, bets.size());
+
+        Bet persistedBet = bets.get(0);
+        Assertions.assertEquals(newBet.getHomeTeam(), persistedBet.getHomeTeam());
+        Assertions.assertEquals(newBet.getAwayTeam(), persistedBet.getAwayTeam());
+        Assertions.assertEquals(newBet.getOutcome(), persistedBet.getOutcome());
+        Assertions.assertEquals(newBet.getOdd(), persistedBet.getOdd());
     }
 
 }

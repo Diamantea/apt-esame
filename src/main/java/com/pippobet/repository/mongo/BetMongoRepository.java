@@ -24,4 +24,10 @@ public class BetMongoRepository implements BetRepository
     {
         return mongoTemplate.findAll(Bet.class);
     }
+
+    @Override
+    public Bet saveBet(Bet bet)
+    {
+        return mongoTemplate.save(bet);
+    }
 }

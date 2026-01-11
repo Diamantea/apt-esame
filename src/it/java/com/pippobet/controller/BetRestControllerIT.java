@@ -19,6 +19,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -74,4 +75,24 @@ public class BetRestControllerIT {
                 .andExpect(jsonPath("$[1].odd", is(2.)));
     }
 
+    @Test
+    public void testPostBetShouldReturnCreatedBet() throws Exception {
+        String betJson = "{\"home_team\":\"home\",\"away_team\":\"away\",\"outcome\":\"1\",\"odd\":1.5}";
+
+        this.mvc.perform(post("/api/bets")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(betJson))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.home_team", is("home")))
+            .andExpect(jsonPath("$.away_team", is("away")))
+            .andExpect(jsonPath("$.outcome", is("1")))
+            .andExpect(jsonPath("$.odd", is(1.5)));
+
+        var bets = mongoTemplate.findAll(Bet.class);
+        org.junit.Assert.assertEquals(1, bets.size());
+        org.junit.Assert.assertEquals("home", bets.get(0).getHomeTeam());
+        org.junit.Assert.assertEquals("away", bets.get(0).getAwayTeam());
+        org.junit.Assert.assertEquals("1", bets.get(0).getOutcome());
+        org.junit.Assert.assertEquals(1.5, bets.get(0).getOdd(), 0.01);
+    }
 }

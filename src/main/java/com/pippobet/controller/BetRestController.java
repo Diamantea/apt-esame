@@ -1,5 +1,6 @@
 package com.pippobet.controller;
 
+import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.model.Bet;
 import com.pippobet.service.BetService;
 import org.springframework.http.MediaType;
@@ -19,5 +20,10 @@ public class BetRestController {
 	@GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Bet> getAll() {
 		return betService.findAll();
+	}
+
+	@PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Bet createBet(@RequestBody BetCreateDTO betDTO) {
+		return betService.saveBet(betDTO);
 	}
 }
