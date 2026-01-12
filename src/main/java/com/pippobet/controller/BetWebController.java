@@ -1,10 +1,13 @@
 package com.pippobet.controller;
 
+import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.service.BetService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/bets")
@@ -21,5 +24,12 @@ public class BetWebController {
     public String viewBets(Model model) {
         model.addAttribute(ATTRIBUTE_BETS, betService.findAll());
         return ATTRIBUTE_BETS;
+    }
+
+    @PostMapping
+    public String addBet(BetCreateDTO betCreateDTO, RedirectAttributes redirectAttributes) {
+        betService.saveBet(betCreateDTO);
+        redirectAttributes.addFlashAttribute("successMessage", "Bet added successfully!");
+        return "redirect:/bets";
     }
 }

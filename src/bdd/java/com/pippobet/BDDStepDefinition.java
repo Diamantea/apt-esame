@@ -130,8 +130,8 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
             .andReturn();
     }
 
-    @Then("the bet is successfully created")
-    public void thenBetIsSuccessfullyCreated() {
+    @Then("the bet is successfully returned in the response")
+    public void thenBetIsSuccessfullyReturnedInTheResponse() {
         response.then().statusCode(HttpStatus.SC_OK);
 
         Bet createdBet = response.jsonPath().getObject("", Bet.class);
@@ -151,6 +151,46 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
         Assertions.assertEquals(newBet.getAwayTeam(), persistedBet.getAwayTeam());
         Assertions.assertEquals(newBet.getOutcome(), persistedBet.getOutcome());
         Assertions.assertEquals(newBet.getOdd(), persistedBet.getOdd());
+    }
+
+    @When("the user navigates to the bets page")
+    public void whenUserNavigatesToTheBetsPage() {
+        driver.navigate().to("http://localhost:" + port + "/bets");
+    }
+
+    @When("the user fills the form with home team {string}, away team {string}, outcome {string}, and odd {double}")
+    public void whenUserFillsTheFormWithBetDetails(String homeTeam, String awayTeam, String outcome, double odd) {
+        driver.findElement(By.id("homeTeam")).sendKeys(homeTeam);
+        driver.findElement(By.id("awayTeam")).sendKeys(awayTeam);
+        driver.findElement(By.id("outcome")).sendKeys(outcome);
+        driver.findElement(By.id("odd")).sendKeys(String.valueOf(odd));
+    }
+
+    @When("the user submits the form")
+    public void whenUserSubmitsTheForm() {
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+    }
+
+    @Then("the success message is displayed")
+    public void thenSuccessMessageIsDisplayed() throws InterruptedException {
+        Thread.sleep(500);
+        WebElement successAlert = driver.findElement(By.className("alert-success"));
+        Assertions.assertTrue(successAlert.getText().contains("Bet added successfully!"),
+                "Success message should be displayed after form submission");
+    }
+
+    @Then("the bet is persisted in the Database with home team {string}, away team {string}, outcome {string}, and odd {double}")
+    public void thenBetIsPersistedInDatabaseWithDetails(String homeTeam, String awayTeam, String outcome, double odd) {
+        List<Bet> bets = mongoTemplate.findAll(Bet.class);
+        Assertions.assertEquals(1, bets.size());
+
+        Bet persistedBet = bets.get(0);
+        Assertions.assertEquals(homeTeam, persistedBet.getHomeTeam());
+        Assertions.assertEquals(awayTeam, persistedBet.getAwayTeam());
+        Assertions.assertEquals(outcome, persistedBet.getOutcome());
+        Assertions.assertEquals(odd, persistedBet.getOdd());
+
+        driver.quit();
     }
 
 }
