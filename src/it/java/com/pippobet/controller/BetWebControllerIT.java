@@ -95,4 +95,48 @@ public class BetWebControllerIT {
 
         assertThat(betRows.size()).isEqualTo(3);
     }
+
+    @Test
+    public void testAddBet_SuccessfullySubmitsForm() {
+        driver.get(baseUrl + "/bets");
+
+        driver.findElement(By.id("homeTeam")).sendKeys("Manchester United");
+        driver.findElement(By.id("awayTeam")).sendKeys("Liverpool");
+        driver.findElement(By.id("outcome")).sendKeys("1");
+        driver.findElement(By.id("odd")).sendKeys("1.95");
+
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        WebElement successAlert = driver.findElement(By.className("alert-success"));
+        assertThat(successAlert.getText()).contains("Bet added successfully!");
+
+        List<Bet> savedBets = mongoTemplate.findAll(Bet.class);
+        assertThat(savedBets).hasSize(1);
+        assertThat(savedBets.get(0).getHomeTeam()).isEqualTo("Manchester United");
+        assertThat(savedBets.get(0).getAwayTeam()).isEqualTo("Liverpool");
+        assertThat(savedBets.get(0).getOutcome()).isEqualTo("1");
+        assertThat(savedBets.get(0).getOdd()).isEqualTo(1.95);
+    }
+
+    @Test
+    public void testAddBet_FormClearsAfterSubmission() {
+        driver.get(baseUrl + "/bets");
+
+        driver.findElement(By.id("homeTeam")).sendKeys("Team A");
+        driver.findElement(By.id("awayTeam")).sendKeys("Team B");
+        driver.findElement(By.id("outcome")).sendKeys("2");
+        driver.findElement(By.id("odd")).sendKeys("2.50");
+
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        // After submission and redirect, verify form is cleared
+        WebElement homeTeamInput = driver.findElement(By.id("homeTeam"));
+        assertThat(homeTeamInput.getAttribute("value")).isEmpty();
+        WebElement awayTeamInput = driver.findElement(By.id("awayTeam"));
+        assertThat(awayTeamInput.getAttribute("value")).isEmpty();
+        WebElement outcomeInput = driver.findElement(By.id("outcome"));
+        assertThat(outcomeInput.getAttribute("value")).isEmpty();
+        WebElement oddInput = driver.findElement(By.id("odd"));
+        assertThat(oddInput.getAttribute("value")).isEmpty();
+    }
 }
