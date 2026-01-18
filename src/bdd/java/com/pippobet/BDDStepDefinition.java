@@ -176,7 +176,8 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
     public void thenSuccessMessageIsDisplayed() throws InterruptedException {
         Thread.sleep(500);
         WebElement successAlert = driver.findElement(By.className("alert-success"));
-        Assertions.assertTrue(successAlert.getText().contains("Bet added successfully!"),
+        String alertText = successAlert.getText();
+        Assertions.assertTrue(alertText.contains("successfully!"),
                 "Success message should be displayed after form submission");
     }
 
@@ -211,5 +212,17 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
         boolean betExists = bets.stream()
                 .anyMatch(bet -> bet.getId().toHexString().equals(betIdToDelete));
         Assertions.assertFalse(betExists, "Deleted bet should not exist in database");
+    }
+
+    @When("the user clicks the delete button for the first bet")
+    public void whenUserClicksDeleteButtonForFirstBet() throws InterruptedException {
+        if (!expectedBets.isEmpty()) {
+            betIdToDelete = expectedBets.get(0).getId().toHexString();
+        }
+        driver.findElement(By.cssSelector("button[type='submit'].btn-delete")).click();
+        Thread.sleep(500);
+        // Accept the confirmation dialog
+        driver.switchTo().alert().accept();
+        Thread.sleep(500);
     }
 }
