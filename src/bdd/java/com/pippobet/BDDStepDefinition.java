@@ -37,6 +37,7 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
     private WebDriver driver;
 
     private Bet newBet;
+    private String betIdToDelete;
 
     @Before
     public void setUp() {
@@ -193,4 +194,22 @@ public class BDDStepDefinition extends CucumberSpringConfiguration {
         driver.quit();
     }
 
+    @When("the bet is deleted via REST endpoint")
+    public void whenBetIsDeletedViaRESTEndpoint() {
+        betIdToDelete = expectedBets.get(0).getId().toHexString();
+        response = RestAssured.delete("/api/bets/" + betIdToDelete).andReturn();
+    }
+
+    @Then("the response status code is {int}")
+    public void thenResponseStatusCodeIs(int statusCode) {
+        response.then().statusCode(statusCode);
+    }
+
+    @Then("the bet is removed from the Database")
+    public void thenBetIsRemovedFromDatabase() {
+        List<Bet> bets = mongoTemplate.findAll(Bet.class);
+        boolean betExists = bets.stream()
+                .anyMatch(bet -> bet.getId().toHexString().equals(betIdToDelete));
+        Assertions.assertFalse(betExists, "Deleted bet should not exist in database");
+    }
 }
