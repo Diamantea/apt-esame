@@ -3,10 +3,10 @@ package com.pippobet.service;
 import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.model.Bet;
 import com.pippobet.repository.BetRepository;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -52,5 +52,14 @@ public class BetServiceTest {
         var actualBet = betService.saveBet(betDTO);
 
         Assertions.assertEquals(expectedBet, actualBet);
+    }
+
+    @Test
+    void testDeleteBetShouldCallRepository() {
+        var betId = new ObjectId();
+
+        betService.deleteBet(betId);
+
+        Mockito.verify(betRepository).deleteBet(betId);
     }
 }

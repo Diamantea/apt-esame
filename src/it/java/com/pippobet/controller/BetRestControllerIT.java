@@ -61,14 +61,16 @@ public class BetRestControllerIT {
     public void testGetAllBetsWithBetsInTheDB() throws Exception {
         Bet betOne = new Bet("home team 1","away team 1","outcome 1",1.);
         Bet betTwo = new Bet("home team 2","away team 2","outcome 2",2.);
-        mongoTemplate.save(betOne);
-        mongoTemplate.save(betTwo);
+        betOne = mongoTemplate.save(betOne);
+        betTwo = mongoTemplate.save(betTwo);
 
         this.mvc.perform(get("/api/bets").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(betOne.getIdAsString())))
                 .andExpect(jsonPath("$[0].home_team", is("home team 1")))
                 .andExpect(jsonPath("$[0].away_team", is("away team 1")))
                 .andExpect(jsonPath("$[0].outcome", is("outcome 1")))
                 .andExpect(jsonPath("$[0].odd", is(1.)))
+                .andExpect(jsonPath("$[1].id", is(betTwo.getIdAsString())))
                 .andExpect(jsonPath("$[1].home_team", is("home team 2")))
                 .andExpect(jsonPath("$[1].away_team", is("away team 2")))
                 .andExpect(jsonPath("$[1].outcome", is("outcome 2")))

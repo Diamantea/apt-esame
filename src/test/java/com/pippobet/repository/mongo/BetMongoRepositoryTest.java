@@ -2,11 +2,14 @@ package com.pippobet.repository.mongo;
 
 import com.pippobet.model.Bet;
 import java.util.List;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class BetMongoRepositoryTest
 {
@@ -43,5 +46,16 @@ public class BetMongoRepositoryTest
 
         Assertions.assertEquals(expectedBets, actualBets);
         Mockito.verify(mongoTemplate).findAll(Bet.class);
+    }
+
+    @Test
+    void testDeleteBetShouldCallMongoTemplateRemove()
+    {
+        var betId = new ObjectId();
+
+        repository.deleteBet(betId);
+
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        Mockito.verify(mongoTemplate).remove(queryCaptor.capture(), Mockito.eq(Bet.class));
     }
 }

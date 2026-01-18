@@ -3,6 +3,7 @@ package com.pippobet.service;
 import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.model.Bet;
 import com.pippobet.repository.BetRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,5 +22,9 @@ public class BetService {
     public Bet saveBet(BetCreateDTO betDTO) {
         Bet bet = new Bet(betDTO.getHomeTeam(), betDTO.getAwayTeam(), betDTO.getOutcome(), betDTO.getOdd());
         return betRepository.saveBet(bet);
+    }
+
+    public void deleteBet(ObjectId id) {
+        betRepository.deleteBet(id);
     }
 }

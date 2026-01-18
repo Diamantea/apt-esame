@@ -3,6 +3,7 @@ package com.pippobet.controller;
 import com.pippobet.dto.BetCreateDTO;
 import com.pippobet.model.Bet;
 import com.pippobet.service.BetService;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,5 +45,14 @@ public class BetRestControllerTest {
 
         Assertions.assertEquals(createdBet, actual);
         Mockito.verify(service).saveBet(betDTO);
+    }
+
+    @Test
+    void testDeleteBet() {
+        var betId = new ObjectId().toHexString();
+
+        controller.deleteBet(betId);
+
+        Mockito.verify(service).deleteBet(Mockito.any(ObjectId.class));
     }
 }

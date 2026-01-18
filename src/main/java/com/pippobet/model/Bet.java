@@ -62,6 +62,16 @@ public class Bet {
         return odd;
     }
 
+    public ObjectId getId()
+    {
+        return id;
+    }
+
+    @JsonProperty("id")
+    public String getIdAsString()
+    {
+        return id != null ? id.toHexString() : null;
+    }
 
     @Override
     public boolean equals(Object o)
