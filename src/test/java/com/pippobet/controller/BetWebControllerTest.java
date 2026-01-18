@@ -2,6 +2,7 @@ package com.pippobet.controller;
 
 import com.pippobet.model.Bet;
 import com.pippobet.service.BetService;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,16 @@ class BetWebControllerTest {
                 .andExpect(redirectedUrl("/bets"));
 
         verify(betService).saveBet(any());
+    }
+
+    @Test
+    void testDeleteBet_SuccessfullyDeletesAndRedirects() throws Exception {
+        String betId = new ObjectId().toHexString();
+
+        mockMvc.perform(post("/bets/{id}/delete", betId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/bets"));
+
+        verify(betService).deleteBet(any(ObjectId.class));
     }
 }
