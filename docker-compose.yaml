@@ -1,11 +1,7 @@
-# MongoDB for running the application locally:
-#   docker compose up -d
-#   mvn spring-boot:run   (or java -jar target/PippoBet-1.0-SNAPSHOT.jar)
-# Same MongoDB version used by Testcontainers in the tests.
 services:
   mongodb:
-    image: mongo:8.0.12
-    restart: unless-stopped
+    image: mongo:latest
+    restart: always
     container_name: mongodb
     ports:
       - "27017:27017"
